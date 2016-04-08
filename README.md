@@ -19,10 +19,29 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	"fmt"
    )
 
+   func param(ctx *Context, key string) (bool, string) {
+	v := ctx.Get(key)
+	if v != nil {
+		if vv, ok := v.(string); ok {
+			return true, vv
+		}
+	 }
+	return false, ""
+   }
+
    func main(){
 	 app:=gbeta.App()
-	 app.Get("/",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
-	     res.Write([]byte("Hello World!"))	
+	 app.Get("/hello/:user/from/:place",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
+		if found,user:=param(ctx,"user");found{
+			 if fou,place:=param(ctx,"place");fou{
+				res.Write([]byte("Hello "+user+" from "+place))
+			 }else{
+				res.Write([]byte("Hello "+user))
+			 }
+		}else{
+			 res.Write([]byte("Hello World!"))
+		}
+	    	
 	 })
 	 app.Listen("8080",func(err error){
 		if err!=nil{
