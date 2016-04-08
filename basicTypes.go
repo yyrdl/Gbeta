@@ -40,4 +40,5 @@ type ServeHTTPFunc func(w http.ResponseWriter, req *http.Request)
 type ServeHTTPWraper func(ServeHTTPFunc) ServeHTTPFunc
 
 //在context.go里面的checkAndSet方法里面用到
+// see the func CheckAndSet in context.go
 type CheckFunc func(interface{}, interface{}) bool
