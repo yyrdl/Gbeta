@@ -123,7 +123,7 @@ You can use it write some special middleware ,like logger
 你可以使用这个接口编写一些特殊的中间件，比如logger
 ##### gbeta.ServeHTTPFunc
 ```go
-  type ServeHTTPFunc func(w http.ResponseWriter,req *http.Request)
+  type ServeHTTPFunc func(res gbeta.Res,req gbeta.Req)
 ```
 
 #### app.UseSubRouter(path string ,router *gbeta.Router)
