@@ -69,12 +69,13 @@ func (a *_App) ListenTLS(port string, certFile string, keyFile string, handler L
 }
 
 func (a *_App) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	res := &_Response{w, 0, 0}
 	if a.serve_http_func != nil {
-		a.serve_http_func(w, req)
+		a.serve_http_func(res, req)
 	} else {
 		//http.NotFound(w, req)
 		a.serve_http_func = buildServeHTTP(a)
-		a.serve_http_func(w, req)
+		a.serve_http_func(res, req)
 	}
 }
 
@@ -120,8 +121,7 @@ func App() *_App {
 // such as who want to write a different log middleware
 func buildServeHTTP(a *_App) ServeHTTPFunc {
 	//the default serve_http strategy
-	original_serve_http := func(w http.ResponseWriter, req *http.Request) {
-		res := &_Response{w, 0, 0}
+	original_serve_http := func(res Res, req Req) {
 		if a.panic_handler != nil { //use panic_handler if existing
 			defer func() {
 				if r_c := recover(); r_c != nil {

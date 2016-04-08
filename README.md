@@ -1,5 +1,8 @@
 # Gbeta ![build status](https://travis-ci.org/yyrdl/Gbeta.svg?branch=master)
-Gbeta是一个Express 风格的web框架，性能上比martini好
+Gbeta is an express style web framework ,and the performance is better than [Martini](https://github.com/go-martini/martini)
+
+Gbeta是一个Express 风格的web框架，性能优于[Martini](https://github.com/go-martini/martini)
+
 ```
 BenchmarkGbetaSingleRoute     2000000      710 ns/op      41 B/op    3 allocs/op
 BenchmarkMartiniSingleRoute    100000    12038 ns/op     464 B/op   13 allocs/op
@@ -114,6 +117,9 @@ func main(){
 
 ```
 #### app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc
+
+You can use it write some special middleware ,like logger
+
 你可以使用这个接口编写一些特殊的中间件，比如logger
 ##### gbeta.ServeHTTPFunc
 ```go

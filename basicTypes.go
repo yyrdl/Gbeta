@@ -34,7 +34,7 @@ type PanicHandler func(w Res, req Req, r_c interface{})
 //用户自定义NotFound hanler
 type NotFoundHandler func(res Res, req Req)
 
-type ServeHTTPFunc func(w http.ResponseWriter, req *http.Request)
+type ServeHTTPFunc func(res Res, req Req)
 
 //内部使用
 type ServeHTTPWraper func(ServeHTTPFunc) ServeHTTPFunc
