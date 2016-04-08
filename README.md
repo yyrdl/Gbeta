@@ -54,7 +54,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 		c<-done
 	}()
 	<-c
-	next(true)
+	next(true)//'true' means should going on while 'false' means the 'response' has been    //  sent by the middleware ,
 }
 func param(ctx *Context, key string) (bool, string) {
 	v := ctx.Get(key)
@@ -72,7 +72,7 @@ func main(){
 			fmt.Println("something wrong ! I should not find 'name' here!")
 		}
 		if found,name:=param(ctx,"user");!found{
-			fmt.Println("something wrong ! I should not find 'user' here!")
+			fmt.Println("something wrong ! I should  find 'user' here!")
 		}
 		res.Write([]byte("Hello world!"))
 	})

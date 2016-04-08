@@ -1,4 +1,5 @@
-package jasmine
+// by yyrdl ,MIT License
+package gbeta
 
 import (
 	"strings"
