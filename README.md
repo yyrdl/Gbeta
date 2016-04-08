@@ -1,9 +1,9 @@
 # Gbeta ![build status](https://travis-ci.org/yyrdl/Gbeta.svg?branch=master)
 Gbeta是一个Express 风格的web框架，性能上比martini好
 ```
-BenchmarkgbetaSingleRoute   2000000      710 ns/op      41 B/op    3 allocs/op
+BenchmarkGbetaSingleRoute     2000000      710 ns/op      41 B/op    3 allocs/op
 BenchmarkMartiniSingleRoute    100000    12038 ns/op     464 B/op   13 allocs/op
-BenchmarkGbetaMutipleRoute     3000   410271 ns/op   26051 B/op  824 allocs/op
+BenchmarkGbetaMutipleRoute       3000   410271 ns/op   26051 B/op  824 allocs/op
 BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 ```
 ## Install/Update
