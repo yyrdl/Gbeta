@@ -19,7 +19,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	"fmt"
    )
 
-   func param(ctx *Context, key string) (bool, string) {
+   func param(ctx *gbeta.Context, key string) (bool, string) {
 	v := ctx.Get(key)
 	if v != nil {
 		if vv, ok := v.(string); ok {
@@ -75,7 +75,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	<-c
 	next(true)//'true' means should going on while 'false' means the 'response' has been    //  sent by the middleware ,
 }
-func param(ctx *Context, key string) (bool, string) {
+func param(ctx *gbeta.Context, key string) (bool, string) {
 	v := ctx.Get(key)
 	if v != nil {
 		if vv, ok := v.(string); ok {
