@@ -165,10 +165,12 @@ func buildServeHTTP(a *_App) ServeHTTPFunc {
 				for i := 0; i < len(node.middleware_to_excute); i++ {
 					a.router.middlewares[node.middleware_to_excute[i]].middleware.Do(ctx, res, req, next_func)
 					if !to_next {
-						return
+						break
 					}
 				}
-				node.handler(ctx, res, req)
+				if to_next {
+					node.handler(ctx, res, req)
+				}
 				ctx.Clear()     //清空ctx
 				a.pool.Put(ctx) //放回pool备用，减轻GC负担
 			} else { //not found
