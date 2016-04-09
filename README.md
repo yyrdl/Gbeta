@@ -21,8 +21,8 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	"github/yyrdl/gbeta"
 	"fmt"
    )
-
-   func param(ctx *gbeta.Context, key string) (bool, string) {
+   
+  func param(ctx *gbeta.Context, key string) (bool, string) {
 	v := ctx.Get(key)
 	if v != nil {
 		if vv, ok := v.(string); ok {
@@ -31,11 +31,8 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	 }
 	return false, ""
    }
-
-   func main(){
-	 app:=gbeta.App()
-	
-	 app.Get("/hello/:user/from/:place",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
+   
+   func hello_handler(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,user:=param(ctx,"user");found{
 			 if fou,place:=param(ctx,"place");fou{
 				res.Write([]byte("Hello "+user+" from "+place))
@@ -45,18 +42,24 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 		}else{
 			 res.Write([]byte("Hello World!"))
 		}
-	    	
-	 })
-	
-	 app.Listen("8080",func(err error){
+  }
+  
+  func listen_handler(err error){
 		if err!=nil{
 			//do something
 		}else{
 			fmt.Println("Server is running at port 8080.")
 		}
-	})
+  }
+
+   func main(){
+   
+	 app:=gbeta.App()
 	
-}
+	 app.Get("/hello/:user/from/:place",hello_handler)
+	
+	 app.Listen("8080",listen_handler)
+  }
 ```
  
 #### app.Use(path string,middleware gbeta.Middlewares)
@@ -102,11 +105,7 @@ func param(ctx *gbeta.Context, key string) (bool, string) {
 	}
 	return false, ""
 }
-
-func main(){
-	app:=gbeta.App()
-	
-	app.Get("/profile/:user",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
+func handle_profile(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,name:=param(ctx,"name");found{
 			fmt.Println("something wrong ! I should not find 'name' here!")
 		}
@@ -114,17 +113,24 @@ func main(){
 			fmt.Println("something wrong ! I should  find 'user' here!")
 		}
 		res.Write([]byte("Hello world!"))
-	})
-	
-	//use the middleware here 
-	app.Use("/v1",new(My_Middleware))
-	
-	app.Post("/v1/admin",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
+}
+
+func handle_post(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,name:=param(ctx,"name");!found{
 			fmt.Println("something wrong ! I should  find 'name' here!")
 		}
 		res.Write([]byte("Request recieved!"))
-	})
+}
+
+func main(){
+	app:=gbeta.App()
+	
+	app.Get("/profile/:user",handle_profile)
+	
+	//use the middleware here 
+	app.Use("/v1",new(My_Middleware))
+	
+	app.Post("/v1/admin",handle_post)
 	
 	app.Listen("8080",func(err error){
 		if err!=nil{
