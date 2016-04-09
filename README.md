@@ -26,7 +26,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
     func main(){
    
 	 app:=gbeta.App()
-	 app.WrapServeHTTP(gbeta_loger.Log)
+	 app.WrapServeHTTP(gbeta_loger.Log)// use logger
 	 
 	 app.Get("/hello/:user/from/:place",hello_handler)
 	
