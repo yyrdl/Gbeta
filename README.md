@@ -22,6 +22,15 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	"fmt"
    )
    
+    func main(){
+   
+	 app:=gbeta.App()
+	
+	 app.Get("/hello/:user/from/:place",hello_handler)
+	
+	 app.Listen("8080",listen_handler)
+   }
+  
   func param(ctx *gbeta.Context, key string) (bool, string) {
 	v := ctx.Get(key)
 	if v != nil {
@@ -51,15 +60,6 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 			fmt.Println("Server is running at port 8080.")
 		}
   }
-
-   func main(){
-   
-	 app:=gbeta.App()
-	
-	 app.Get("/hello/:user/from/:place",hello_handler)
-	
-	 app.Listen("8080",listen_handler)
-  }
 ```
  
 #### app.Use(path string,middleware gbeta.Middlewares)
@@ -78,8 +78,34 @@ the Middlewares Interface definition
 ##### example
 
 ```go
-  // define a middleware
+ package main 
+ 
+ import(
+    "fmt"
+    "github.com/yyrdl/gbeta"
+  )
 
+func main(){
+	app:=gbeta.App()
+	
+	app.Get("/profile/:user",handle_profile)
+	
+	//use the middleware here 
+	app.Use("/v1",new(My_Middleware))
+	
+	app.Post("/v1/admin",handle_post)
+	
+	app.Listen("8080",func(err error){
+		if err!=nil{
+			// do something
+		}else{
+			//
+			fmt.Println("Server is running! :)")
+		}
+	})
+ }
+ 
+  // define a middleware
   type My_Middleware struct{}
 
   //implement the Middlewares Interface
@@ -121,27 +147,6 @@ func handle_post(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		}
 		res.Write([]byte("Request recieved!"))
 }
-
-func main(){
-	app:=gbeta.App()
-	
-	app.Get("/profile/:user",handle_profile)
-	
-	//use the middleware here 
-	app.Use("/v1",new(My_Middleware))
-	
-	app.Post("/v1/admin",handle_post)
-	
-	app.Listen("8080",func(err error){
-		if err!=nil{
-			// do something
-		}else{
-			//
-			fmt.Println("Server is running! :)")
-		}
-	})
- }
-
 ```
 #### app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc
 
