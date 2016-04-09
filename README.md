@@ -172,6 +172,8 @@ Contexts are safe for simultaneous use by multiple goroutines.
 * gbeta.Context.Delete(key interface{})
 * gbeta.Context.CheckAndSet(key,value interface{},checkFunc gbeta.CheckFunc)bool
 * gbeta.Context.Clear()
+
+
 ####  gbeta.App()*gbeta._App
 ####  app.Get(string,gbeta.ReqHandler)
 ####  app.Post(string,gbeta.ReqHandler)
