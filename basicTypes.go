@@ -6,6 +6,12 @@ import (
 	"net/http"
 )
 
+type _MiddlewareNode struct {
+	middleware     Middlewares
+	path           string
+	exsited_max_id int //it means the max node.id that has been added to the router tree
+}
+
 type Res interface {
 	Write([]byte) (int, error)
 	Header() http.Header

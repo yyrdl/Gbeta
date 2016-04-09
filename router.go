@@ -4,12 +4,6 @@ import (
 	"strings"
 )
 
-type _MiddlewareNode struct {
-	middleware     Middlewares
-	path           string
-	exsited_max_id int //it means the max node.id that has been added to the router tree
-}
-
 type Router struct {
 	root           *_Node
 	middlewares    []*_MiddlewareNode //store the middlewares

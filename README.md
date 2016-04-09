@@ -34,6 +34,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 
    func main(){
 	 app:=gbeta.App()
+	
 	 app.Get("/hello/:user/from/:place",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,user:=param(ctx,"user");found{
 			 if fou,place:=param(ctx,"place");fou{
@@ -46,6 +47,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 		}
 	    	
 	 })
+	
 	 app.Listen("8080",func(err error){
 		if err!=nil{
 			//do something
@@ -58,15 +60,26 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 ```
  
 #### app.Use(path string,middleware gbeta.Middlewares)
+
+use a custom Middleware ,very easy
+
 ##### middleware Interface
+
+the Middlewares Interface definition
+
 ```go
    type Middlewares Interface{
-	Do(ctx *Context,res Res,req Req,next Next)
+	Do(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req,next gbeta.Next)
    }
 ```
 ##### example
+
 ```go
+  // define a middleware
+
   type My_Middleware struct{}
+
+  //implement the Middlewares Interface
   func (m*My_Middle)Do(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req,next gbeta.Next){
 	c:=make(chan bool,1)
 	const done bool=true
@@ -78,6 +91,8 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	<-c
 	next(true)//'true' means should going on while 'false' means the 'response' has been    //  sent by the middleware ,
 }
+
+// a param util 
 func param(ctx *gbeta.Context, key string) (bool, string) {
 	v := ctx.Get(key)
 	if v != nil {
@@ -87,8 +102,10 @@ func param(ctx *gbeta.Context, key string) (bool, string) {
 	}
 	return false, ""
 }
+
 func main(){
 	app:=gbeta.App()
+	
 	app.Get("/profile/:user",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,name:=param(ctx,"name");found{
 			fmt.Println("something wrong ! I should not find 'name' here!")
@@ -98,13 +115,17 @@ func main(){
 		}
 		res.Write([]byte("Hello world!"))
 	})
+	
+	//use the middleware here 
 	app.Use("/v1",new(My_Middleware))
+	
 	app.Post("/v1/admin",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,name:=param(ctx,"name");!found{
 			fmt.Println("something wrong ! I should  find 'name' here!")
 		}
 		res.Write([]byte("Request recieved!"))
 	})
+	
 	app.Listen("8080",func(err error){
 		if err!=nil{
 			// do something
@@ -130,15 +151,27 @@ You can use it write some special middleware ,like logger
 example
 ```go
      app:=gbeta.App()
+	
 	 subrouter:=gbeta.NewRouter()
+	
 	 subrouter.Get("/article/:id",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		res.Write([]byte("Hello world"))
 	})
-	app.Use("/service1",subrouter)
+	
+	app.UseSubRouter("/service1",subrouter)
+	
 	app.Listen("8080",func(err error){
 		//do something
 	})
 ```
+#### gbeta.Context
+Contexts are safe for simultaneous use by multiple goroutines.
+* gbeta.NewContext()*gbeta.Context
+* gbeta.Context.Set(key,value interface{})
+* gbeta.Context.Get(key interface{})interface{}
+* gbeta.Context.Delete(key interface{})
+* gbeta.Context.CheckAndSet(key,value interface{},checkFunc gbeta.CheckFunc)bool
+* gbeta.Context.Clear()
 ####  gbeta.App()*gbeta._App
 ####  app.Get(string,gbeta.ReqHandler)
 ####  app.Post(string,gbeta.ReqHandler)
@@ -163,6 +196,29 @@ enable or disable the default options support
 ####  router.Patch(string,gbeta.ReqHandler)
 ####  router.Delete(string,gbeta.ReqHandler)
 ####  router.Options(string,gbeta.ReqHandler)
+####  Basic types definition
+* gbeta.Res
+```go
+   type Res interface {
+	Write([]byte) (int, error)
+	Header() http.Header
+	WriteHeader(int)
+	Code() int
+	BytesWritten() int64
+}
+```
+* gbeta.Req
+```go
+   type Req *http.Request
+```
+* gbeta.ReqHandler
+```
+  type ReqHandler func(ctx *gbeta.Context, res gbeta.Res, req gbeta.Req)
+```
+
+more definition can be find in the basicTypes.go
+
+
 
 #### License
 MIT License
