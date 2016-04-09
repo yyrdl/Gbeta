@@ -166,13 +166,13 @@ example
 ```
 #### gbeta.Context
 Contexts are safe for simultaneous use by multiple goroutines.
-```
-* gbeta.NewContext()*gbeta.Context
-* gbeta.Context.Set(key,value interface{})
-* gbeta.Context.Get(key interface{})interface{}
-* gbeta.Context.Delete(key interface{})
-* gbeta.Context.CheckAndSet(key,value interface{},checkFunc gbeta.CheckFunc)bool
-* gbeta.Context.Clear()
+```go
+ gbeta.NewContext()*gbeta.Context
+ gbeta.Context.Set(key,value interface{})
+ gbeta.Context.Get(key interface{})interface{}
+ gbeta.Context.Delete(key interface{})
+ gbeta.Context.CheckAndSet(key,value interface{},checkFunc gbeta.CheckFunc)bool
+ gbeta.Context.Clear()
 ```
 
 
