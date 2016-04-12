@@ -6,14 +6,28 @@ Gbeta是一个Express 风格的web框架，性能优于[Martini](https://github.
 ```
 BenchmarkGbetaSingleRoute     2000000      710 ns/op      41 B/op    3 allocs/op
 BenchmarkMartiniSingleRoute    100000    12038 ns/op     464 B/op   13 allocs/op
-BenchmarkGbetaMutipleRoute       3000   410271 ns/op   26051 B/op  824 allocs/op
-BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
+BenchmarkGbetaGithubAll          3000   410271 ns/op   26051 B/op  824 allocs/op
+BenchmarkMartiniGithubAll        1000  2373968 ns/op  101615 B/op 2266 allocs/op
 ```
-## Install/Update
+## Table of Contents
+
+* [Install/Update](#1.-installupdate)
+* [Hello World](#2.-hello-world)
+* [Use Subrouter](#3.-use-subrouter)
+* [Middleware](#4.-middleware)
+  * [app.Use(path string,middleware gbeta.Middlewares)](#4.1-appusepath-stringmiddleware-gbetamiddlewares)
+  * [app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc](#4.2-appwrapservehttporiginal_func-gbetaservehttpfuncgbetaservehttpfunc)
+* [Context](#5.-context)
+* [App](#6.-app)
+* [Router](#7.-router)
+* [other types definition](#8.-other-types-definition)
+
+
+## 1. Install/Update
 ```shell
  go get -u github.com/yyrdl/gbeta
 ```
-## Hello World
+## 2. Hello World
 ```go
    package main
 
@@ -26,13 +40,19 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
     func main(){
    
 	 app:=gbeta.App()
-	 app.WrapServeHTTP(gbeta_loger.Log)// use logger
 	 
-	 app.Get("/hello/:user/from/:place",hello_handler)
+	 app.Get("/hello/:user/from/:place",hello)
 	
 	 app.Listen("8080",listen_handler)
    }
-  
+
+  func hello(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
+	     _,user:=param(ctx,"user")
+		 _,place:=param(ctx,"place")
+		
+		res.Write([]byte("Hello "+user+" from "+place))
+  }
+
   func param(ctx *gbeta.Context, key string) (bool, string) {
 	v := ctx.Get(key)
 	if v != nil {
@@ -43,17 +63,7 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 	return false, ""
    }
    
-   func hello_handler(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
-		if found,user:=param(ctx,"user");found{
-			 if fou,place:=param(ctx,"place");fou{
-				res.Write([]byte("Hello "+user+" from "+place))
-			 }else{
-				res.Write([]byte("Hello "+user))
-			 }
-		}else{
-			 res.Write([]byte("Hello World!"))
-		}
-  }
+  
   
   func listen_handler(err error){
 		if err!=nil{
@@ -63,12 +73,54 @@ BenchmarkMartiniMutipleRoute     1000  2373968 ns/op  101615 B/op 2266 allocs/op
 		}
   }
 ```
+## 3. Use Subrouter
+```go
+app.UseSubRouter(path string ,router *gbeta.Router)
+```
+example
+
+//main.go
+```go
+    package main
+	import(
+		"github.com/yyrdl/gbeta"
+		"service1"
+	)
+	
+	func main(){
+		app:=gbeta.App()
+		
+	    app.UseSubRouter("/service1",service1.Route())
+	
+	    app.Listen("8080",func(err error){
+		   //do something
+	    })
+	}
+```
+// service1.go
+```go
+  package service1
+  import(
+	"github.com/yyrdl/gbeta"
+  )
+
+  func Route()*gbeta.Router{
+	 subrouter:=gbeta.NewRouter()
+	
+	 subrouter.Get("/article/:id",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
+		//do something
+	 })
+	
+	 return subrouter
+   }
+```
+
+## 4. Middleware
+### 4.1  app.Use(path string,middleware gbeta.Middlewares)
  
-#### app.Use(path string,middleware gbeta.Middlewares)
+use a custom Middleware in a special path,very easy
 
-use a custom Middleware ,very easy
-
-##### middleware Interface
+#####4.1.1  middleware Interface
 
 the Middlewares Interface definition
 
@@ -77,7 +129,7 @@ the Middlewares Interface definition
 	Do(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req,next gbeta.Next)
    }
 ```
-##### example
+##### 4.1.2 example
 
 ```go
  package main 
@@ -123,16 +175,6 @@ func main(){
 	next(true)//'true' means should going on while 'false' means the 'response' has been    //  sent by the middleware ,
 }
 
-// a param util 
-func param(ctx *gbeta.Context, key string) (bool, string) {
-	v := ctx.Get(key)
-	if v != nil {
-		if vv, ok := v.(string); ok {
-			return true, vv
-		}
-	}
-	return false, ""
-}
 func handle_profile(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		if found,name:=param(ctx,"name");found{
 			fmt.Println("something wrong ! I should not find 'name' here!")
@@ -150,34 +192,19 @@ func handle_post(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 		res.Write([]byte("Request recieved!"))
 }
 ```
-#### app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc
 
-You can use it write some special middleware ,like logger
+### 4.2 app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc
 
-你可以使用这个接口编写一些特殊的中间件，比如logger
-##### gbeta.ServeHTTPFunc
+You can use it write some special middleware ,like [logger](https://github.com/yyrdl/Gbeta_logger)
+
+你可以使用这个接口编写一些特殊的中间件，比如[logger](https://github.com/yyrdl/Gbeta_logger)
+##### 4.2.1 gbeta.ServeHTTPFunc
 ```go
   type ServeHTTPFunc func(res gbeta.Res,req gbeta.Req)
 ```
 
-#### app.UseSubRouter(path string ,router *gbeta.Router)
-example
-```go
-     app:=gbeta.App()
-	
-	 subrouter:=gbeta.NewRouter()
-	
-	 subrouter.Get("/article/:id",func(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
-		res.Write([]byte("Hello world"))
-	})
-	
-	app.UseSubRouter("/service1",subrouter)
-	
-	app.Listen("8080",func(err error){
-		//do something
-	})
-```
-#### gbeta.Context
+
+## 5. Context
 Contexts are safe for simultaneous use by multiple goroutines.
 ```go
  gbeta.NewContext()*gbeta.Context
@@ -188,32 +215,56 @@ Contexts are safe for simultaneous use by multiple goroutines.
  gbeta.Context.Clear()
 ```
 
+## 6. App
+*  `gbeta.App()*gbeta._App`
 
-####  gbeta.App()*gbeta._App
-####  app.Get(string,gbeta.ReqHandler)
-####  app.Post(string,gbeta.ReqHandler)
-####  app.Put(string,gbeta.ReqHandler)
-####  app.Patch(string,gbeta.ReqHandler)
-####  app.Delete(string,gbeta.ReqHandler)
-####  app.Options(string,gbeta.ReqHandler)
-####  app.Listen(port string,handler gbeta.ListenHandler)
-####  app.ListenTLS(port string,certFile string, keyFile string,handler gbeta.ListenHandler)
-####  app.HandlePanic(handler gbeta.PanicHandler)
-####  app.HandleNotFound(handler gbeta.NotFoundHandler)
-####  app.DefaultOptions(cmd bool)
-enable or disable the default options support
-####  app.ServeHTTP(w http.ResponseWriter,req *http.Request)
+*  `app.Get(path string,gbeta.ReqHandler)`
 
-####  gbeta.NewRouter()*gbeta.Router
-####  router.Use(string,gbeta.Middlewares)
-####  router.UseSubRouter(string,*gbeta.Router)
-####  router.Get(string,gbeta.ReqHandler)
-####  router.Post(string,gbeta.ReqHandler)
-####  router.Put(string,gbeta.ReqHandler)
-####  router.Patch(string,gbeta.ReqHandler)
-####  router.Delete(string,gbeta.ReqHandler)
-####  router.Options(string,gbeta.ReqHandler)
-####  Basic types definition
+*  `app.Post(path string,gbeta.ReqHandler)`
+
+*  `app.Put(path string,gbeta.ReqHandler)`
+
+*  `app.Patch(path string,gbeta.ReqHandler)`
+
+*  `app.Delete(path string,gbeta.ReqHandler)`
+
+*  `app.Options(path string,gbeta.ReqHandler)`
+
+*  `app.Listen(port string,handler gbeta.ListenHandler)`
+
+*  `app.ListenTLS(port string,certFile string, keyFile string,handler gbeta.ListenHandler)`
+
+*  `app.HandlePanic(handler gbeta.PanicHandler)`
+
+*  `app.HandleNotFound(handler gbeta.NotFoundHandler)`
+
+*  `app.DefaultOptions(cmd bool)`
+     enable or disable the default options support
+     
+*  `app.ServeHTTP(w http.ResponseWriter,req *http.Request)`
+
+## 7. Router
+*  `gbeta.NewRouter()*gbeta.Router`
+
+*  `router.Use(path string,gbeta.Middlewares)`
+
+*  `router.UseSubRouter(path string,*gbeta.Router)`
+
+*  `router.Get(path string,gbeta.ReqHandler)`
+
+*  `router.Post(path string,gbeta.ReqHandler)`
+
+*  `router.Put(path string,gbeta.ReqHandler)`
+
+*  `router.Patch(path string,gbeta.ReqHandler)`
+
+*  `router.Delete(path string,gbeta.ReqHandler)`
+
+*  `router.Options(path string,gbeta.ReqHandler)`
+
+
+##  8. other types definition
+
 * gbeta.Res
 ```go
    type Res interface {

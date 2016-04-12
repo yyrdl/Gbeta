@@ -67,7 +67,7 @@ func BenchmarkMartiniSingleRoute(b *testing.B) {
 }
 
 //
-func BenchmarkGbetaMutipleRoutes(b *testing.B) {
+func BenchmarkGbetaGithubAll(b *testing.B) {
 	app := App()
 	app.serve_http_func = buildServeHTTP(app)
 	for _, r := range githubAPI {
@@ -114,7 +114,7 @@ func BenchmarkGbetaMutipleRoutes(b *testing.B) {
 		}
 	}
 }
-func BenchmarkMartiniMutipleRoutes(b *testing.B) {
+func BenchmarkMartiniGithubAll(b *testing.B) {
 	app := martini.Classic()
 	for _, r := range githubAPI {
 		switch r.path {
