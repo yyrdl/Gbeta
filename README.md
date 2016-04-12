@@ -205,7 +205,7 @@ You can use it write some special middleware ,like [logger](https://github.com/y
 
 
 ## 5. Context
-Contexts are safe for simultaneous use by multiple goroutines.
+Contexts are safe for simultaneous use by multiple goroutines. 
 ```go
  gbeta.NewContext()*gbeta.Context
  gbeta.Context.Set(key,value interface{})
@@ -216,7 +216,12 @@ Contexts are safe for simultaneous use by multiple goroutines.
 ```
 
 ## 6. App
+
 *  `gbeta.App()*gbeta._App`
+
+*  `app.Use(path string,middleware gbeta.Middlewares)`
+
+*  `app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc`
 
 *  `app.Get(path string,gbeta.ReqHandler)`
 
@@ -284,7 +289,7 @@ Contexts are safe for simultaneous use by multiple goroutines.
   type ReqHandler func(ctx *gbeta.Context, res gbeta.Res, req gbeta.Req)
 ```
 
-more definition can be find in the basicTypes.go
+more definition can be found in the basicTypes.go
 
 
 
