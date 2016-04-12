@@ -14,7 +14,7 @@ BenchmarkMartiniGithubAll        1000  2373968 ns/op  101615 B/op 2266 allocs/op
 * [Install/Update](#1-installupdate)
 * [Hello World](#2-hello-world)
 * [Use Subrouter](#3-use-subrouter)
-* [Middleware](#4-middleware)
+* [Use Middleware](#4-use-middleware)
   * [app.Use(path string,middleware gbeta.Middlewares)](#41-appusepath-stringmiddleware-gbetamiddlewares)
   * [app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc](#42-appwrapservehttporiginal_func-gbetaservehttpfuncgbetaservehttpfunc)
 * [Context](#5-context)
@@ -115,8 +115,8 @@ example
    }
 ```
 
-## 4. Middleware
-### 4.1  app.Use(path string,middleware gbeta.Middlewares)
+## 4. Use Middleware
+### 4.1 app.Use(path string,middleware gbeta.Middlewares)
  
 use a custom Middleware in a special path,very easy
 
