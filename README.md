@@ -16,7 +16,7 @@ BenchmarkMartiniGithubAll        1000  2373968 ns/op  101615 B/op 2266 allocs/op
 * [Use Subrouter](#3-use-subrouter)
 * [Use Middleware](#4-use-middleware)
   * [app.Use(path string,middleware gbeta.Middlewares)](#41-appusepath-stringmiddleware-gbetamiddlewares)
-  * [app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc](#42-appwrapservehttporiginal_func-gbetaservehttpfuncgbetaservehttpfunc)
+  * [app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc](#42-appwrapservehttpori-gbetaservehttpfuncgbetaservehttpfunc)
 * [Context](#5-context)
 * [App](#6-app)
 * [Router](#7-router)
@@ -193,7 +193,7 @@ func handle_post(ctx *gbeta.Context,res gbeta.Res,req gbeta.Req){
 }
 ```
 
-### 4.2 app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc
+### 4.2 app.WrapServeHTTP(ori gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc
 
 You can use it write some special middleware ,like [logger](https://github.com/yyrdl/Gbeta_logger)
 
