@@ -223,17 +223,17 @@ Contexts are safe for simultaneous use by multiple goroutines.
 
 *  `app.WrapServeHTTP(original_func gbeta.ServeHTTPFunc)gbeta.ServeHTTPFunc`
 
-*  `app.Get(path string,gbeta.ReqHandler)`
+*  `app.Get(path string,handler gbeta.ReqHandler)`
 
-*  `app.Post(path string,gbeta.ReqHandler)`
+*  `app.Post(path string,handler gbeta.ReqHandler)`
 
-*  `app.Put(path string,gbeta.ReqHandler)`
+*  `app.Put(path string,handler gbeta.ReqHandler)`
 
-*  `app.Patch(path string,gbeta.ReqHandler)`
+*  `app.Patch(path string,handler gbeta.ReqHandler)`
 
-*  `app.Delete(path string,gbeta.ReqHandler)`
+*  `app.Delete(path string,handler gbeta.ReqHandler)`
 
-*  `app.Options(path string,gbeta.ReqHandler)`
+*  `app.Options(path string,handler gbeta.ReqHandler)`
 
 *  `app.Listen(port string,handler gbeta.ListenHandler)`
 
@@ -251,21 +251,21 @@ Contexts are safe for simultaneous use by multiple goroutines.
 ## 7. Router
 *  `gbeta.NewRouter()*gbeta.Router`
 
-*  `router.Use(path string,gbeta.Middlewares)`
+*  `router.Use(path string,plugin gbeta.Middlewares)`
 
-*  `router.UseSubRouter(path string,*gbeta.Router)`
+*  `router.UseSubRouter(path string,rou *gbeta.Router)`
 
-*  `router.Get(path string,gbeta.ReqHandler)`
+*  `router.Get(path string,handler gbeta.ReqHandler)`
 
-*  `router.Post(path string,gbeta.ReqHandler)`
+*  `router.Post(path string,handler gbeta.ReqHandler)`
 
-*  `router.Put(path string,gbeta.ReqHandler)`
+*  `router.Put(path string,handler gbeta.ReqHandler)`
 
-*  `router.Patch(path string,gbeta.ReqHandler)`
+*  `router.Patch(path string,handler gbeta.ReqHandler)`
 
-*  `router.Delete(path string,gbeta.ReqHandler)`
+*  `router.Delete(path string,handler gbeta.ReqHandler)`
 
-*  `router.Options(path string,gbeta.ReqHandler)`
+*  `router.Options(path string,handler gbeta.ReqHandler)`
 
 
 ##  8. other types definition
