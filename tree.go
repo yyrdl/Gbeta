@@ -371,9 +371,8 @@ func updateNodeList(to *Router, start *_Node, id_offset int, father_path string)
 // find the node on the path with particular method
 // the func will return the node's pointer ,and if there are any path parameters,the
 //func will return them as an string ,such as "key1,value1;key2,value2;"
-func findNode(start *_Node, path string, method string) (*_Node, string) {
+func findNode(start *_Node, path string, method string, ctx *Context) *_Node {
 	var (
-		kvs       string = "" //存放path parameter
 		match     bool   = false
 		key       string = ""
 		value     string = ""
@@ -390,7 +389,7 @@ func findNode(start *_Node, path string, method string) (*_Node, string) {
 		if start.path.more_op { //whether the subpath is an special path ,and need more operation
 			match, key, value, path_left = start.path.Match(path) //then do more operation by it self
 			if key != "" {
-				kvs = kvs + key + "," + value + ";"
+				ctx.Set(key, value)
 			}
 
 		} else {
@@ -407,6 +406,9 @@ func findNode(start *_Node, path string, method string) (*_Node, string) {
 			}
 		}
 		if match {
+			if start.path.more_op {
+				length = len(path) - len(path_left) - 1
+			}
 			if len(path_left) > 0 && path[length] != 63 { //"?"决定是否继续往下找
 				// judge if we should search deeper
 				if start.existed_more_op {
@@ -418,13 +420,13 @@ func findNode(start *_Node, path string, method string) (*_Node, string) {
 				continue
 			} else {
 				if start.method == method { //若method匹配
-					return start, kvs
+					return start
 				}
 			}
 		}
 		start = start.next
 	}
-	return nil, ""
+	return nil
 }
 
 //寻找某一个路径下允许使用的method 结果形如"POST,PUT"
@@ -459,6 +461,9 @@ func findAllowedMethod(start *_Node, path string) string {
 			}
 		}
 		if match {
+			if start.path.more_op {
+				length = len(path) - len(path_left) - 1
+			}
 			if len(path_left) > 0 && path[length] != 63 { //"?"决定是否继续往下找
 				if start.existed_more_op {
 					start = start.children[10]

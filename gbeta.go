@@ -134,26 +134,11 @@ func buildServeHTTP(a *_App) ServeHTTPFunc {
 			res.Header().Set("Allow", allowed_method)
 			res.WriteHeader(http.StatusOK)
 		} else {
-			node, params := findNode(a.router.root.children[11], req.URL.Path, req.Method)
+			ctx := a.pool.Get().(*Context)
+			node := findNode(a.router.root.children[11], req.URL.Path, req.Method, ctx)
 			//找到了node
 
 			if node != nil {
-				ctx := a.pool.Get().(*Context)
-				if params != "" { //set params
-					var key string
-					for i := 0; i < len(params); i++ {
-						if params[i:i+1] == "," {
-							key = params[:i]
-							params = params[i+1:]
-							i = 0
-						}
-						if params[i:i+1] == ";" {
-							ctx.Set(key, params[:i])
-							params = params[i+1:]
-							i = 0
-						}
-					}
-				}
 				//通过Use添加的中间件默认是按添加顺序执行的,
 				//中间件应该保证内部创建的goroutine退出后，才完成执行，当然因为特别的原因不退出也行
 				var to_next bool = true
