@@ -3,6 +3,8 @@ Gbeta is an express style web framework ,and the performance is better than [Mar
 
 Gbeta是一个Express 风格的web框架，性能优于[Martini](https://github.com/go-martini/martini)
 
+__No maintenance__ Maybe you can try [Gin](https://github.com/gin-gonic/gin).
+
 ```
 BenchmarkGbetaSingleRoute     2000000      710 ns/op      41 B/op    3 allocs/op
 BenchmarkMartiniSingleRoute    100000    12038 ns/op     464 B/op   13 allocs/op
